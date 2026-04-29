@@ -1,0 +1,84 @@
+/*********************************************************************************************
+ This is the build.gradle file use to build the project. If you want to make changes to your
+ project, you have to make the changes here. Do not use the IDE Settings to change settings!!!
+ They will be overwritten by the build file settings, when you import them again and the
+ project might not be runnable for other users and on the jenkins build system.
+
+ This requires the variables rbArtifactoryUser and rbArtifactoryPassword to be set
+ in <userDir>/.gradle/gradle.properties file
+ The password has to be hashed by logging into https://rb-artifactory.bosch.com
+ and then clicking on your user name. You have to unlock with your password again and then
+ you get the password hash.
+ *********************************************************************************************/
+
+// The only plugin you need, includes groovy, codenarc, spock etc.
+plugins {
+  id 'bosch.bh.spex.gradle.spex-testprogram'
+}
+
+/* The dependencies of your project */
+dependencies {
+  Dependency spexPlatform = platform('bosch.bh.spex:spex-platform:1.14.+')
+
+  implementation(spexPlatform)
+
+  /* The TLI needed for your program */
+  implementation 'bosch.bh.spex:TLI'
+  implementation 'bosch.bh.spex:PVServer'
+  implementation 'bosch.bh.include:spex-test-platform:1.2.4'
+
+  /* the SDKs needed to compile the program */
+  implementation 'bosch.bh.spex.include:SPEX-TL-SDK'
+  implementation 'bosch.bh.spex.include:SPEX-RT-SDK'
+  //implementation 'bosch.bh.spex.include:SPEX-MICRO-SDK'
+  //implementation 'bosch.bh.spex.include:SPEX-LXI-SDK'
+
+  /* the Libraries needed to compile the program */
+  implementation 'bosch.bh.include:BaseLib:2.5.1'
+  //see https://spex.de.bosch.com/docs/ for more libs
+
+  testImplementation 'bosch.bh.include:spex-test-fixtures'
+}
+
+/* The group id for your maven-publish. Don't forget to add the path also in Jenkinsfile */
+group = 'bosch.bh.testprograms.ivtb.example'
+/* The version number for your maven-publish */
+version = findProperty('releaseVersion') ?: "0.0.1-SNAPSHOT"
+mainClassName = "bosch.bh.testprograms.ivtb.example.main.Main"
+
+/* this task creates the buildinfo.properties to enable your test program to show the git version info */
+createBuildInfoProperties {
+  buildInfoFile = "${project.projectDir}/src/buildinfo/buildinfo.properties"
+}
+
+task runApp(type: JavaExec) {
+  group = "run"
+  description = "Runs the SPEX-TLI with args."
+
+  classpath(sourceSets.main.runtimeClasspath.findAll {
+    it.name.endsWith(".jar")
+  })
+
+  main = 'bosch.bh.ts3000.init.UsrAppInit'
+
+  workingDir = "${projectDir}/test/data"
+
+  // arguments to pass to the application
+  args = ['config.xml', 'config.properties', 'log4j2.xml']
+}
+
+fatJar {
+  // If you want to add own Libraries, that are not in packages provided from EAT25
+  // you can add them like this:
+
+  includedFilePattern << /.*[\\\/]bosch.bh.spex.*\.jar/
+  encrypt = false
+}
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      from components.java
+    }
+  }
+}

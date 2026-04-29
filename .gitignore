@@ -1,0 +1,10 @@
+.gradle
+.idea
+
+/build/
+/dist/
+
+/src/buildinfo/buildinfo.properties
+/src/META-INF/TLDependencies.properties
+
+/src/bosch/bh/testprograms/ivtb/example/main/declares.txt

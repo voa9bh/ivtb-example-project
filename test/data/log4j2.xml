@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- status: level for log4j2 internal logging (does not change the application log level, log level is changed under element <Loggers/> ) -->
+<!-- packages: plugin SimpleConsole appender -->
+<Configuration status="DEBUG" packages="bosch.bh.ts3000.procs">
+  <Properties>
+    <Property name="basePath">../logs/spextl</Property>
+    <Property name="basePathHistory">${basePath}/history/$${date:yyyy-MM}/$${date:yyyy-MM-dd}</Property>
+    <Property name="defaultLogPattern">%d{ISO8601} [%thread] %level{length=5} %logger{3} %x - %message %xException{filters(groovy,org.codehaus.groovy,java,javax,sun,com.sun,gjdk.groovy,groovyx.gpars,jsr166y,org.apache,net.java,org.eclipse,org.gradle,jdk.internal,org.spockframework)}%n</Property>
+    <Property name="defaultFileDate">%d{MM-dd-yyyy}-%i</Property>
+    <Property name="defaultMaxFileSize">50 MB</Property>
+    <Property name="spexJavaLog">spexJava</Property>
+  </Properties>
+
+  <Appenders>
+
+    <!-- RollingFile (Appender): Logs into a file and wraps up every day and when file is reaching ${defaultMaxFileSize} -->
+    <!-- General speX logger -->
+    <RollingFile name="SpexJavaFileAppender" fileName="${basePath}/${spexJavaLog}.log"
+                 filePattern="${basePathHistory}/${spexJavaLog}-${defaultFileDate}.log">
+      <PatternLayout pattern="${defaultLogPattern}"/>
+      <Policies>
+        <TimeBasedTriggeringPolicy/>
+        <SizeBasedTriggeringPolicy size="${defaultMaxFileSize}"/>
+      </Policies>
+    </RollingFile>
+
+    <!-- System out, still works for TS3000, so we use it -->
+    <Console name="SpexJavaSystemOut" target="SYSTEM_OUT">
+      <PatternLayout pattern="${defaultLogPattern}"/>
+    </Console>
+
+  </Appenders>
+  <Loggers>
+    <!-- CHANGE ROOT LOGGER LEVEL HERE (debug,error,...) -->
+    <Root level="DEBUG">
+      <AppenderRef ref="SpexJavaFileAppender"/>
+      <AppenderRef ref="SpexJavaSystemOut"/>
+    </Root>
+
+    <Logger name="io.netty" level="DEBUG"/>
+    <Logger name="bosch.bh.ts3000.procs.PVClient2" level="DEBUG" />
+    <Logger name="bosch.bh.ts3000.pvserver.SocketConnector" level="DEBUG"/>
+    <Logger name="bosch.bh.ts3000.procs.SubProcess" level="ERROR" />
+    <Logger name="bosch.bh.include.rtsupport.RTProgramSupport" level="ERROR" />
+
+  </Loggers>
+</Configuration>

@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE configuration [
+    <!ELEMENT configuration (object)*>
+    <!ELEMENT object (param|object)*>
+    <!ATTLIST object
+
+        className CDATA #REQUIRED
+        handle CDATA #IMPLIED
+        dimension CDATA #IMPLIED
+        name CDATA #REQUIRED>
+    <!ELEMENT param (#PCDATA)>
+    <!ATTLIST param
+        value CDATA #REQUIRED
+        index CDATA #IMPLIED
+        name CDATA #REQUIRED>
+    ]>
+<!-- configuration for ExampleStep -->
+<configuration>
+  <object name="procs" handle="" dimension="" className="MemLong">
+    <object name="netConnector" dimension="" handle="" className="SocketConnector">
+      <param name="portNo" index="" value="5002"/>
+    </object>
+
+    <object name="webSocket" dimension="" handle="" className="SocketConnector">
+      <param name="portNo" index="" value="5010"/>
+      <param name="loggingEnabled" index="" value="0"/>
+      <param name="protocol[0]" index="" value="2"/>
+    </object>
+
+    <object handle="" dimension="" className="Lookup" name="lookup"/>
+
+    <object handle="" dimension="" className="ErrorHandler" name="errorHandler">
+      <param name="hConnector" index="" value="netConnector"/>
+    </object>
+
+    <object handle="" dimension="" className="PVConsole" name="console">
+      <param name="hConnector" index="" value="netConnector"/>
+    </object>
+
+    <object handle="" dimension="" className="Clock" name="clock"/>
+
+    <object handle="" dimension="" className="TLI" name="tli">
+      <param name="virHandle" index="" value="pvServer/vir"/>
+      <param name="rdHandle" index="" value="pvServer/rd"/>
+      <param name="tdHandle" index="" value="pvServer/td"/>
+      <param name="consoleHandle" index="" value="procs/console"/>
+      <param name="classPath" index="" value="${user.dir}/.."/>
+      <param name="hErrorHandlerObj" index="" value="pvServer/procs/ErrorHandler"/>
+      <param name="callbackObject" index="" value="procs/csInterface"/>
+    </object>
+
+    <object handle="" dimension="" className="PVClient" name="pvcMyself">
+      <param name="hostName" index="" value="localhost"/>
+      <param name="port" index="" value="5002"/>
+      <param name="useBigPacket" index="" value="1"/>
+      <param name="useBinaryResponse" index="" value="1"/>
+    </object>
+
+    <object handle="" dimension="" className="PVClient2" name="pvcWebSocket">
+      <param name="hostName" index="" value="localhost"/>
+      <param name="port" index="" value="5010"/>
+      <param name="protocol[0]" index="" value="2"/>
+      <param name="loggingEnabled" index="" value="3"/>
+      <param name="useBigPacket" index="" value="1"/>
+      <param name="useBinaryResponse" index="" value="0"/>
+    </object>
+
+    <object handle="" dimension="" className="CSInterface" name="csInterface">
+      <param name="hCallbackObj" index="" value="csInterface/message"/>
+      <param value="typedata" index="" name="codeBase"/>
+      <param value="typedata_tli.xml" index="" name="typeDataFile"/>
+      <param value="../MinimalProgram.groovy" index="" name="testProgramFile"/>
+      <param value="../LAUSER.TXT" index="" name="prokistFile"/>
+      <param name="hTDHostObj" index="" value="procs/tdHostInterface"/>
+      <param name="hRdObj" index="" value="pvServer/rd"/>
+      <param name="hTliObj" index="" value="procs/tli"/>
+      <!--param name="hResetSeqObj" index="" value="procs/csInterface/ResetSeq"/-->
+      <param name="hErrorHandlerObj" index="" value="procs/errorHandler"/>
+      <param name="hClockObj" index="" value="procs/clock"/>
+      <param name="TimeoutTLI" index="" value="36000"/>
+      <param name="hGetDataObj" index="" value="vir/analogValues"/>
+      <param name="hProkistObj" index="" value="d203_7/ms9_7_0"/>
+      <param value="vir/nestnr" index="" name="hVirNestNrObj"/>
+
+      <object name="message" handle="" dimension="" className="CallbackText">
+        <param name="hConnector" index="" value="netConnector"/>
+      </object>
+
+      <object name="userFlagFromCS1" handle="" dimension="" className="MemLong"/>
+      <object name="userFlagFromCS2" handle="" dimension="" className="MemLong"/>
+      <object name="userFlagFromCS3" handle="" dimension="" className="MemLong"/>
+      <object name="userFlagFromCS4" handle="" dimension="" className="MemLong"/>
+      <object name="machineOperationMode" handle="" dimension="" className="MemLong"/>
+
+      <object handle="" dimension="" className="CallbackLong" name="userFlagToCS1">
+      </object>
+      <object handle="" dimension="" className="CallbackLong" name="userFlagToCS2">
+      </object>
+      <object handle="" dimension="" className="CallbackLong" name="userFlagToCS3">
+      </object>
+      <object handle="" dimension="" className="CallbackLong" name="userFlagToCS4">
+      </object>
+    </object>
+
+    <object handle="" dimension="" className="TDHostInterface" name="tdHostInterface">
+      <param name="tdRootHandle" index="" value="pvServer/td"/>
+      <param name="rdRootHandle" index="" value="pvServer/rd"/>
+      <param name="cellFTPUserName" index="" value="ftp_login"/>
+      <param name="cellFTPPassword" index="" value="krp8CWKGctA="/>
+      <param name="cellResultDir" index="" value="./resultdata"/>
+      <param name="localResultDir" index="" value="./typedata"/>
+      <param name="lineNo" index="" value="1"/>
+      <param name="stationNo" index="" value="62"/>
+      <param name="parallelStationNo" index="" value="62"/>
+      <param name="stationFunction" index="" value="PRF_FKT_ABS8"/>
+      <param name="partIdentifyFlag" index="" value="1"/>
+      <param name="standalone" index="" value="1"/>
+    </object>
+  </object>
+
+  <object name="dev" handle="" dimension="" className="MemLong">
+    <object name="timer" handle="" dimension="" className="Timer"/>
+    <object name="system" handle="" dimension="" className="PVSystem"/>
+    <object name="prokist1" handle="" dimension="" className="ProkistRemote">
+      <param name="gatewayHandle" index="" value="pvcMyself"/>
+      <param name="forwardHandle" index="" value="1000"/>
+    </object>
+    <object name="prokistRemote" handle="1000" dimension="" className="ProkistRemote"/>
+  </object>
+
+  <object name="vir" handle="" dimension="" className="MemLong">
+    <object name="vModeFlag" handle="" dimension="" className="MemLong">
+      <param name="security" index="" value="0x007"/>
+    </object>
+    <object name="vSaveImage" handle="" dimension="" className="MemLong"/>
+    <object name="vBinningResult" handle="" dimension="" className="MemLong"/>
+    <object name="nestnr" handle="" dimension="" className="MemLong"/>
+    <object handle="" dimension="" className="Reference" name="vRd">
+      <param name="forwardHandle" index="" value="pvServer/rd"/>
+    </object>
+    <object handle="" dimension="" className="Reference" name="vTDHostInterface">
+      <param name="forwardHandle" index="" value="procs/tdHostInterface"/>
+    </object>
+    <object handle="" dimension="" className="Reference" name="vClock">
+      <param name="forwardHandle" index="" value="procs/clock"/>
+    </object>
+    <object handle="" dimension="" className="Reference" name="vConsole">
+      <param name="forwardHandle" index="" value="procs/console"/>
+    </object>
+
+    <object name="vNetConnector" handle="" dimension="" className="Reference">
+      <param name="forwardHandle" index="" value="procs/netConnector"/>
+    </object>
+
+    <object name="vUserFlagToCS" handle="" dimension="" className="MemLong"/>
+    <object name="vUserFlagFromCS" handle="" dimension="" className="CallbackLong">
+      <param name="hConnector" index="" value="procs/netConnector"/>
+    </object>
+
+    <object name="vVoltageIn" handle="" dimension="" className="MemLong"/>
+
+    <object name="vBuffer1" handle="" dimension="" className="BufferDouble">
+      <param name="capacity" index="" value="1000"/>
+    </object>
+
+    <object name="localBuffer" handle="50" dimension="" className="BufferDouble">
+      <param name="capacity" index="" value="8192"/>
+    </object>
+
+    <object name="localBufferA" handle="" dimension="" className="BufferDouble">
+      <param name="capacity" index="" value="8192"/>
+    </object>
+
+    <object name="localBufferB" handle="" dimension="" className="BufferDouble">
+      <param name="capacity" index="" value="8192"/>
+    </object>
+
+    <object name="remoteBuffer" handle="" dimension="" className="RemoteObject">
+      <param name="gatewayHandle" index="" value="procs/pvcMyself"/>
+      <param name="remoteObjectName" index="" value="vir/localBuffer"/>
+    </object>
+
+    <object name="remoteBufferA" handle="" dimension="" className="RemoteObject">
+      <param name="gatewayHandle" index="" value="procs/pvcMyself"/>
+      <param name="remoteObjectName" index="" value="vir/localBufferA"/>
+    </object>
+
+    <object name="remoteBufferB" handle="" dimension="" className="RemoteObject">
+      <param name="gatewayHandle" index="" value="procs/pvcMyself"/>
+      <param name="remoteObjectName" index="" value="vir/localBufferB"/>
+    </object>
+
+    <object name="classicRemoteBuffer" handle="" dimension="" className="BufferDouble">
+      <param name="gatewayHandle" index="" value="procs/pvcMyself"/>
+      <param name="forwardHandle" index="" value="50"/>
+    </object>
+
+    <object name="bufDouble" handle="" dimension="500" className="BufDouble"/>
+
+    <object className="Reference" handle="" dimension="" name="vProkist">
+      <param value="prokist1" index="" name="forwardHandle"/>
+    </object>
+
+    <object className="Reference" handle="" dimension="" name="vRemoteBuffer">
+      <param value="remoteBuffer" index="" name="forwardHandle"/>
+    </object>
+
+    <object className="Reference" handle="" dimension="" name="vRemoteBufferA">
+      <param value="remoteBufferA" index="" name="forwardHandle"/>
+    </object>
+
+    <object className="Reference" handle="" dimension="" name="vRemoteBufferB">
+      <param value="remoteBufferB" index="" name="forwardHandle"/>
+    </object>
+
+    <object className="ScriptedLong" dimension="" handle="" name="switchToX">
+      <param name="getScript" index="" value="#PCDATA">
+        value
+      </param>
+      <param name="setScript" index="" value="#PCDATA">
+        void setReference(String ref,String var) {
+          def refObject=me.getParent().getChild(ref)
+          println "refObject ${refObject.getPVObject()}"
+          println "var.handle ${me.objectNameToHandle(var)}"
+          println "refObject.getPVObject().forwardHandle(before): ${refObject.getPVObject().forwardHandle}"
+          refObject.getPVObject().forwardHandle=me.objectNameToHandle(var)
+          println "refObject.getPVObject().forwardHandle(after ): ${refObject.getPVObject().forwardHandle}"
+        }
+        switch(value) {
+          case 1:
+            setReference("vRemoteBufferA", "vir/remoteBufferA")
+            setReference("vRemoteBufferB", "vir/remoteBufferB")
+            break
+          case 2:
+            setReference("vRemoteBufferA", "vir/remoteBufferB")
+            setReference("vRemoteBufferB", "vir/remoteBufferA")
+            break
+        }
+      </param>
+    </object>
+
+  </object>
+
+  <object handle="" dimension="" className="MemLong" name="td"/>
+
+  <object handle="" dimension="" className="ResultDataHeader" name="rd">
+    <param name="fixedTraceIDs" index="" value="Test;NestNo;SDPNo"/>
+  </object>
+</configuration>
