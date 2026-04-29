@@ -2,14 +2,14 @@ package bosch.bh.testprograms.ivtb.example.main
 
 import bosch.bh.include.platform.teststep.TestFunction
 import bosch.bh.spex.sdk.tl.MemLong
-import bosch.bh.testprograms.ivtb.example.teststeps.ExampleStep
+import bosch.bh.testprograms.ivtb.example.teststeps.AV_B10_Switch_Time_TAN_T2K
 import bosch.bh.ts3000.procs.StepReturn
 import bosch.bh.ts3000.pvserver.Inject
 
 class Manual extends TestFunction {
 
   @Inject
-  ExampleStep exampleStep
+  AV_B10_Switch_Time_TAN_T2K av_b10_switch_time_tan_t2K
 
   @Inject
   MemLong vModeFlag
@@ -23,7 +23,7 @@ class Manual extends TestFunction {
 
     if (manualFunction == 1) {
       println "Choose manual function:"
-      println "2: ExampleStep"
+      println "2: av_b10_switch_time_tan_t2K"
       Object input = read(manualFunction)
       if (input != null) {
         manualFunction = input
@@ -32,7 +32,7 @@ class Manual extends TestFunction {
 
     switch (manualFunction) {
       case 2:
-        exampleStep.call()
+        av_b10_switch_time_tan_t2K.call()
         break
       default:
         println "unknown function. Ending the program"

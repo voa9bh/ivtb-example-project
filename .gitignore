@@ -6,5 +6,6 @@
 
 /src/buildinfo/buildinfo.properties
 /src/META-INF/TLDependencies.properties
+/src/META-INF/metaBuildInfo.properties
 
 /src/bosch/bh/testprograms/ivtb/example/main/declares.txt

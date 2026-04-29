@@ -5,7 +5,7 @@ import bosch.bh.include.global.Global
 import bosch.bh.include.platform.teststep.TestFunction
 import bosch.bh.spex.sdk.tl.MemLong
 import bosch.bh.spex.sdk.tl.ResultValueText
-import bosch.bh.testprograms.ivtb.example.teststeps.ExampleStep
+import bosch.bh.testprograms.ivtb.example.teststeps.AV_B10_Switch_Time_TAN_T2K
 import bosch.bh.ts3000.procs.StepReturn
 import bosch.bh.ts3000.procs.StepReturnError
 import bosch.bh.ts3000.procs.TaskMessageHandler
@@ -19,7 +19,7 @@ class Main extends TestFunction implements TestProgramMain, TaskMessageHandler {
   @Inject
   public Global global
   @Inject
-  public ExampleStep exampleStep
+  public AV_B10_Switch_Time_TAN_T2K av_b10_switch_time_tan_t2K
   @Inject
   public Auto auto
   @Inject
@@ -57,8 +57,8 @@ class Main extends TestFunction implements TestProgramMain, TaskMessageHandler {
     TestProgramSpec testProgram = new TestProgramBuilder().build {
       libObject("global", Global)
 
-      testStep("exampleStep", ExampleStep) {
-        failOnError(false)
+      testStep("av_b10_switch_time_tan_t2K", AV_B10_Switch_Time_TAN_T2K) {
+        failOnError(true)
       }
 
       libObject("auto", Auto)
