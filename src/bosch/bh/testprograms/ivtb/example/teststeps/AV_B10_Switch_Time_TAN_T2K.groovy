@@ -1,16 +1,27 @@
 package bosch.bh.testprograms.ivtb.example.teststeps
 
 import bosch.bh.include.exceptions.TestException
+import bosch.bh.include.platform.rtmodules.AverageFunction
 import bosch.bh.include.platform.rtmodules.AverageReturn
+import bosch.bh.include.platform.rtmodules.PutRampBentConfig
+import bosch.bh.include.platform.rtmodules.PutRampBentFunction
+import bosch.bh.include.platform.rtmodules.RealtimeRequirement
 import bosch.bh.include.platform.rtmodules.soft.AverageFunctionSoft
 import bosch.bh.include.platform.teststep.TestFunction
+import bosch.bh.include.platform.teststep.WithClassSetup
 import bosch.bh.spex.sdk.common.PVLong
 import bosch.bh.spex.sdk.tl.MemLong
 import bosch.bh.spex.sdk.tl.ResultValueLong
 import bosch.bh.spex.sdk.tl.ResultValueText
 import bosch.bh.spex.sdk.tl.SetValueLong
 import bosch.bh.testprograms.ivtb.global.IVTBTestStep
+import bosch.bh.testprograms.ivtb.global.PutAdaptStatConfig
+import bosch.bh.testprograms.ivtb.global.PutAdaptStatFunction
+import bosch.bh.testprograms.ivtb.global.PutAdaptStatReturn
 import bosch.bh.ts3000.procs.StepReturn
+import bosch.bh.ts3000.procs.TestProgramBuilder
+import bosch.bh.ts3000.procs.testprogrambuilder.TestProgramSpec
+import bosch.bh.ts3000.pvserver.GroovyPVObject
 import bosch.bh.ts3000.pvserver.Inject
 
 // **************************************************************
@@ -42,7 +53,7 @@ import bosch.bh.ts3000.pvserver.Inject
 // * Deklaration     
 // **************************************************************
 
-class AV_B10_Switch_Time_TAN_T2K extends IVTBTestStep {
+class AV_B10_Switch_Time_TAN_T2K extends IVTBTestStep implements WithClassSetup {
 
   @Inject
   SetValueLong M_10_MODF_T
@@ -93,48 +104,10 @@ class AV_B10_Switch_Time_TAN_T2K extends IVTBTestStep {
   @Inject
   PVLong vSTUSwitch
   @Inject
-  PVLong Pump2
-  @Inject
-  PVLong Y22
-  @Inject
-  PVLong Y23
-  @Inject
-  PVLong Y24
-  @Inject
-  PVLong Y29
+  PVLong Pump2, Y22, Y23, Y24, Y29
 
   @Inject
-  PVLong Pump1
-  @Inject
-  PVLong Y11
-  @Inject
-  PVLong Y12
-  @Inject
-  PVLong Y13
-  @Inject
-  PVLong Y14
-  @Inject
-  PVLong Y15
-  @Inject
-  PVLong Y16
-  @Inject
-  PVLong Y17
-  @Inject
-  PVLong Y18
-  @Inject
-  PVLong Y19
-  @Inject
-  PVLong Y21
-  @Inject
-  PVLong Y25
-  @Inject
-  PVLong Y26
-  @Inject
-  PVLong Y27
-  @Inject
-  PVLong Y28
-  @Inject
-  PVLong Y30
+  PVLong Pump1, Y11, Y12, Y13, Y14, Y15, Y16, Y17, Y18, Y19, Y21, Y25, Y26, Y27, Y28, Y30
 
   @Inject
   PVLong P12
@@ -143,6 +116,49 @@ class AV_B10_Switch_Time_TAN_T2K extends IVTBTestStep {
 
   @Inject
   PVLong to1
+
+  // RT objects
+  @Inject
+  AverageFunctionSoft averageFunction
+
+  @Inject
+  PutAdaptStatFunction putAdaptStat
+
+  @Override
+  StepReturn setupClass(StepReturn stepReturn) {
+    TestProgramSpec testProgramSpec = TestProgramBuilder.build {
+      testStep('putAdaptStat', PutAdaptStatFunction) {
+        configure(PutAdaptStatConfig) {
+          it.triggerChannel = to1
+          it.settingChannel = P2_Set
+          it.measuringChannel = P22
+          it.deltaMeasuringChannel = P12
+          it.sensorRel = 0
+          it.diffSetInv = 0
+          it.measMult = 1
+          it.measDiv = 1
+          it.setBefore = M_LOC_P_DIFF_T
+          it.setWithTol = M_LOC_P_DIFF_T
+          it.tolPercentReduction = 25
+          it.compensation = 100
+          it.restTime = 250
+          it.constTime = 150
+          it.cyclicTime = 100
+          it.gradTime = 4
+          it.meanValues = 1
+          it.filterFlag = 49
+          it.amontMeanFilt = 1
+          it.minSteps = 8
+          it.maxSteps = 250000
+          it.maxSetValue = LOC_Count_Cyc
+
+
+        }
+      }
+
+    }
+    return stepReturn
+  }
 
 // **************************************************************
 // * Test Step
@@ -207,31 +223,13 @@ class AV_B10_Switch_Time_TAN_T2K extends IVTBTestStep {
       // ***********************************
 
       // Adjust pressure difference P12 - P22
-      stepReturn << Put_Adapt_Stat_(         //       static adjustment
-          to1,                   //  01 < Trigger channel
-          P2_Set,                 //  02 < Setting channel
-          P22,                   //  03 < Measuring channel for to regular value
-          P12,                   //  04 < Measuring channel for possibly delta measuring
-          0,                     //  05 < Sensor-Relativum pvor_prad
-          0,                     //  06 < Differenz-Sollwert-Invertierung
-          1,                     //  07 < Mess-Stell-Korrelations-Multiplikator
-          1,                     //  08 < Mess-Stell-Korrelations-Divisor
-          M_LOC_P_DIFF_T,         //  09 < Setting value before
-          M_LOC_P_DIFF_T,       //  10 < Setting value with tolerances
-          25,                   //  11 < Stellwert-Toleranz-Einengungsprozentsatz
-          100,                   //  12 < Kompensationsanteil in Prozent
-          250,                   //  13 < Beruhigungszeit Konstantanteil fuer vorweg
-          150,                   //  14 < Beruhigungszeit Konstantanteil zyklisch
-          100,                   //  15 < Beruhigungszeit-Gradient (bar/sec)
-          4,                     //  16 < Amount of mean values prior to filtering
-          1,                     //  17 < Flag for filtering
-          49,                     //  18 < Amount of mean values after filtering
-          1,                     //  19 < minimale Anzahl geforderter Schritte
-          8,                     //  20 < maximale Anzahl erlaubter Schritte
-          250000,                 //  21 < new: max. set value	@TODO parametrierbar!
-          LOC_Count_Cyc,         //  22 > tatsaechliche Anzahl Adaptions-Schritte
-          LOC_Pressure_Set,      //  23 > tatsaechliche Wert auf Stellkanal ausgegeben
-          M_10_P_DIFF)           //  24 > zurueckgemessene Regelgroesse
+      PutAdaptStatReturn putAdaptStatReturn = putAdaptStat.call() as PutAdaptStatReturn
+
+      LOC_Count_Cyc = putAdaptStatReturn.countCyc
+      LOC_Pressure_Set = putAdaptStatReturn.pressureSet
+      M_10_P_DIFF.set putAdaptStatReturn.pressureAct
+
+      stepReturn << putAdaptStatReturn
 
       // Error handling
       if (stepReturn.hasErrors()) {
@@ -252,12 +250,12 @@ class AV_B10_Switch_Time_TAN_T2K extends IVTBTestStep {
 
       set(to1)
 
-      AverageReturn averageResult = new AverageFunctionSoft().average(
+      List averageValues = averageFunction.average(
           [P12, P22], 25, 2
-      )
+      ).averageValues
 
-      M_10_P_VOR.set(averageResult.averageValues[0] as int)
-      M_10_P_RAD.set(averageResult.averageValues[1] as int)
+      M_10_P_VOR.set averageValues[0] as int
+      M_10_P_RAD.set averageValues[1] as int
 
       reset(to1)
 
@@ -369,7 +367,6 @@ class AV_B10_Switch_Time_TAN_T2K extends IVTBTestStep {
       if (stepReturn.errorCode != 0) {
         String errorText = sprintf("PS10: MODULERROR !! (Wait_For_Intern_: P22=GL_P_NULL), Error: %d ", stepReturn.errorCode)
         GL_ERROR_TXT.set(errorText)
-        ErrorOutput()
         M_10_MODF = M_10_MODF + stepReturn.errorCode
         throw new TestException(errorText)
       }
@@ -393,7 +390,7 @@ class AV_B10_Switch_Time_TAN_T2K extends IVTBTestStep {
 
       GL_Step_Break = 1
 
-      Wd_Write_Pos(GL_line, 35, " --> done                     ", 1)
+      println " --> done                     "
 
 
       reset(MVS)
@@ -465,7 +462,6 @@ class AV_B10_Switch_Time_TAN_T2K extends IVTBTestStep {
 
     return stepReturn
   }
-
 }
 
 // **************************************************************

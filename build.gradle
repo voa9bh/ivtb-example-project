@@ -18,7 +18,7 @@ plugins {
 
 /* The dependencies of your project */
 dependencies {
-  Dependency spexPlatform = platform('bosch.bh.spex:spex-platform:1.14.+')
+  Dependency spexPlatform = platform('bosch.bh.spex:spex-platform:1.17.+')
 
   implementation(spexPlatform)
 

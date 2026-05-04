@@ -2,6 +2,7 @@ package bosch.bh.testprograms.ivtb.example.main
 
 import baselib.buildinfo.MetaBuildInfoParser
 import bosch.bh.include.global.Global
+import bosch.bh.include.platform.rtmodules.soft.AverageFunctionSoft
 import bosch.bh.include.platform.teststep.TestFunction
 import bosch.bh.spex.sdk.tl.MemLong
 import bosch.bh.spex.sdk.tl.ResultValueText
@@ -63,6 +64,8 @@ class Main extends TestFunction implements TestProgramMain, TaskMessageHandler {
 
       libObject("auto", Auto)
       libObject("manual", Manual)
+
+      libObject("averageFunction", AverageFunctionSoft)
     }
 
     registerLibObject("testProgram", testProgram)
