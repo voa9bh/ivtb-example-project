@@ -1,13 +1,7 @@
 package bosch.bh.testprograms.ivtb.example.teststeps
 
 import bosch.bh.include.exceptions.TestException
-import bosch.bh.include.platform.rtmodules.AverageFunction
-import bosch.bh.include.platform.rtmodules.AverageReturn
-import bosch.bh.include.platform.rtmodules.PutRampBentConfig
-import bosch.bh.include.platform.rtmodules.PutRampBentFunction
-import bosch.bh.include.platform.rtmodules.RealtimeRequirement
 import bosch.bh.include.platform.rtmodules.soft.AverageFunctionSoft
-import bosch.bh.include.platform.teststep.TestFunction
 import bosch.bh.include.platform.teststep.WithClassSetup
 import bosch.bh.spex.sdk.common.PVLong
 import bosch.bh.spex.sdk.tl.MemLong
@@ -21,7 +15,6 @@ import bosch.bh.testprograms.ivtb.global.PutAdaptStatReturn
 import bosch.bh.ts3000.procs.StepReturn
 import bosch.bh.ts3000.procs.TestProgramBuilder
 import bosch.bh.ts3000.procs.testprogrambuilder.TestProgramSpec
-import bosch.bh.ts3000.pvserver.GroovyPVObject
 import bosch.bh.ts3000.pvserver.Inject
 
 // **************************************************************
@@ -97,7 +90,6 @@ class AV_B10_Switch_Time_TAN_T2K extends IVTBTestStep implements WithClassSetup 
   @Inject
   MemLong vModeFlag
 
-
   @Inject
   MemLong vAO1_Set
 
@@ -129,30 +121,28 @@ class AV_B10_Switch_Time_TAN_T2K extends IVTBTestStep implements WithClassSetup 
     TestProgramSpec testProgramSpec = TestProgramBuilder.build {
       testStep('putAdaptStat', PutAdaptStatFunction) {
         configure(PutAdaptStatConfig) {
-          it.triggerChannel = to1
-          it.settingChannel = P2_Set
-          it.measuringChannel = P22
-          it.deltaMeasuringChannel = P12
-          it.sensorRel = 0
-          it.diffSetInv = 0
-          it.measMult = 1
-          it.measDiv = 1
-          it.setBefore = M_LOC_P_DIFF_T
-          it.setWithTol = M_LOC_P_DIFF_T
-          it.tolPercentReduction = 25
-          it.compensation = 100
-          it.restTime = 250
-          it.constTime = 150
-          it.cyclicTime = 100
-          it.gradTime = 4
-          it.meanValues = 1
-          it.filterFlag = 49
-          it.amontMeanFilt = 1
-          it.minSteps = 8
-          it.maxSteps = 250000
-          it.maxSetValue = LOC_Count_Cyc
+          it.hTriggerOut = to1
+          it.hStlk = P2_Set
+          it.hMeskA = P22
+          it.hMeskB = P12
 
-
+          it.relativ = 0
+          it.inver = 0
+          it.fac_mes = 1
+          it.div_mes = 1
+          it.stlw = M_LOC_P_DIFF_T
+          it.stlz = M_LOC_P_DIFF_T
+          it.narrow = 25
+          it.kompen = 100
+          it.tvor = 250
+          it.tnac = 150
+          it.tgrad = 100
+          it.anz_vf = 4
+          it.filter = 1
+          it.anz_nf = 49
+          it.stpmin = 1
+          it.stpmax = 8
+          it.stl_limit = 250000
         }
       }
 
@@ -196,7 +186,7 @@ class AV_B10_Switch_Time_TAN_T2K extends IVTBTestStep implements WithClassSetup 
 
         reset(Pump1, Y11, Y12, Y13, Y14, Y15, Y16, Y17, Y18, Y19, Y21, Y25, Y26, Y27, Y28, Y30)
 
-        wait(250)
+        waitTime(250)
       }
 
       GL_STU_U_OFFSET_T.set(0) // @todo: ist das eine Toleranz?

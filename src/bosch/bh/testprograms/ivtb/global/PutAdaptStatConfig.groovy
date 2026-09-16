@@ -12,29 +12,28 @@ import groovy.transform.ToString
 @AutoClone
 class PutAdaptStatConfig implements ConfigData {
 
-  GroovyPVObject triggerChannel
-  GroovyPVObject settingChannel
-  GroovyPVObject measuringChannel
-  GroovyPVObject deltaMeasuringChannel
+  GroovyPVObject hTriggerOut
+  GroovyPVObject hStlk
+  GroovyPVObject hMeskA
+  GroovyPVObject hMeskB
 
-  int sensorRel
-  int diffSetInv
-  int measMult
-  int measDiv
-  int setBefore
-  int setWithTol
-  int tolPercentReduction
-  int compensation
-  int restTime
-  int constTime
-  int cyclicTime
-  int gradTime
-  int meanValues
-  int filterFlag
-  int amontMeanFilt
-  int minSteps
-  int maxSteps
-  int maxSetValue
+  int relativ
+  int inver
+  int fac_mes
+  int div_mes
+  int stlw
+  int stlz
+  int narrow
+  int kompen
+  int tvor
+  int tnac
+  int tgrad
+  int anz_vf
+  int filter
+  int anz_nf
+  int stpmin
+  int stpmax
+  int stl_limit
 
   @Override
   StepReturn checkConfigData(StepReturn stepReturn) {
